@@ -1,5 +1,7 @@
 """Core functions of ossimg. (examples for documentation)"""
 
+import numpy as np
+from PIL import Image
 
 def resize(path, width):
     """Resize an image to the given width, keeping its aspect ratio.
@@ -53,4 +55,32 @@ def grayscale(path, out):
         >>> grayscale("examples/clock.png", "clock_gray.png")
         'clock_gray.png'
     """
-    raise NotImplementedError
+    if out == path:
+        raise ValueError("out must differ from path")
+    Image.open(path).convert("L").save(out)
+    return out
+
+def mean_brightness(path):
+    """Return the mean pixel brightness of an image, from 0.0 to 255.0.
+
+    The image is converted to 8 bit grayscale first, so color images and
+    grayscale images give comparable numbers. 0.0 means every pixel is
+    black, 255.0 means every pixel is white.
+
+    Args:
+        path (str): Path to the input image file. Any format Pillow can
+            open (PNG, JPEG, BMP, ...).
+
+    Returns:
+        float: Mean of all pixel values after the grayscale conversion.
+
+    Raises:
+        FileNotFoundError: If ``path`` does not exist.
+        PIL.UnidentifiedImageError: If the file is not an image Pillow can read.
+
+    Examples:
+        >>> round(mean_brightness("examples/clock.png"), 1)
+        127.5
+    """
+    pixels = np.asarray(Image.open(path).convert("L"), dtype=np.float64)
+    return float(pixels.mean())
