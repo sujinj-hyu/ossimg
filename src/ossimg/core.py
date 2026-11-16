@@ -83,4 +83,5 @@ def mean_brightness(path):
         127.5
     """
     pixels = np.asarray(Image.open(path).convert("L"), dtype=np.float64)
-    return float(pixels.mean())
+    # return float(pixels.mean())
+    return float(pixels.max())
